@@ -1,6 +1,6 @@
 
-# <Your-Project-Title>XXXXXX-XXXXXX
-## U of T Coding Boot Camp: # 0XXXXXX 
+# <Your-Project-Title>Blue Skies Weather Dashboard
+## U of T Coding Boot Camp: # 06 Server-Side APIs 
 ### [Installation](#installation)  - [Usage](#usage)  - [Credits](#credits)  - [License](#license) - [Features](#Features)
 &nbsp;
 ## Description
