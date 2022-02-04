@@ -1,7 +1,9 @@
 
 var openWeatherAPIKey = "3fd922e8cac3e8747c787364f94aace5";
 var theFormEl = document.querySelector("#search-form");
-var theMainCard = document.querySelector("#most-recent-search");
+var currentAndForecast = document.querySelector("#all-search-results");
+currentAndForecast.hidden = true;
+var currentConditionsCard = document.querySelector("#search-results-current");
 var theFiveDaySection = document.querySelector("#five-day-section");
 
 var forecastCard1 = document.querySelector("#card1");
@@ -97,11 +99,11 @@ var displayForcast = function (cityName) {
     }
 
     console.log(uvRatingStyle, "is the rating style");
-    theMainCard.innerHTML = "";
+    currentConditionsCard.innerHTML = "";
 
     var currentWeatherHeader = document.createElement("header");
     currentWeatherHeader.classList.add("d-flex", "flex-horiz", "flex-justify-content-right", "align-items-end");
-    theMainCard.appendChild(currentWeatherHeader);
+    currentConditionsCard.appendChild(currentWeatherHeader);
 
     var cityCurrentHeading = document.createElement("h3");
     cityCurrentHeading.classList.add("main-card");
@@ -114,17 +116,17 @@ var displayForcast = function (cityName) {
     var cityCurrentTemp = document.createElement("p");
     cityCurrentTemp.classList.add("main-card");
     cityCurrentTemp.textContent = `Temp: ${currentSearchWeatherObject.currentConditions.temp} °C`;
-    theMainCard.appendChild(cityCurrentTemp);
+    currentConditionsCard.appendChild(cityCurrentTemp);
 
     var cityCurrentWind = document.createElement("p");
     cityCurrentWind.classList.add("main-card");
     cityCurrentWind.textContent = `Wind: ${currentSearchWeatherObject.currentConditions.wind_speed} km/h`
-    theMainCard.appendChild(cityCurrentWind);
+    currentConditionsCard.appendChild(cityCurrentWind);
   
     var cityCurrentHumid = document.createElement("p");
     cityCurrentHumid.classList.add("main-card");
     cityCurrentHumid.textContent = `Humidity: ${currentSearchWeatherObject.currentConditions.humidity} %`
-    theMainCard.appendChild(cityCurrentHumid);
+    currentConditionsCard.appendChild(cityCurrentHumid);
 
     var uvDiv = document.createElement("div");
     uvDiv.classList.add("d-flex", "flex-justify-content-right")
@@ -136,7 +138,8 @@ var displayForcast = function (cityName) {
     uvParagIcon.textContent = uvRatingValue;
     uvDiv.appendChild(cityCurrentUvi);
     uvDiv.appendChild(uvParagIcon)
-    theMainCard.appendChild(uvDiv);
+    currentConditionsCard.appendChild(uvDiv);
+    currentAndForecast.hidden = false;
 
 }
 

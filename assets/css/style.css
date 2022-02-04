@@ -53,7 +53,7 @@ body {
     scroll-behavior: smooth;
     margin: 0;
     -webkit-tap-highlight-color: transparent;
-
+    background-color: #bd9beb;
     font-family: var(--2-body-font);
     font-size: var(--2-font-size);
     color: var(--2-font-color);
