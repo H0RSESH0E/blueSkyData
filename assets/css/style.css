@@ -17,6 +17,12 @@
     --2-bg-color: #b4b6b949;
     --2-border-color: #ffffff91;
 
+    /* UV Index Colours */
+    --uvLow: #289500;
+    --uvMod: #F7E400;
+    --uvHigh: #F85900;
+    --uvVHigh: #D80010;
+    --uvExt: #6B49C8;
 
     /* Mobile First (latest iPhone First) Parameters */
     --swf: calc(375/375); /* Screen Width Factor */
@@ -27,10 +33,10 @@
   
 }
 
-* {
+/* * {
     border: 2px dotted rgba(255, 255, 0, 0.5);
-    background-color: rgba(50, 112, 205, 0.123);
-} 
+    background-color: rgba(50, 112, 205, 0.199);
+}  */
   
 @font-face {
     font-family: 'cache';
@@ -52,6 +58,39 @@ body {
     font-size: var(--2-font-size);
     color: var(--2-font-color);
 }    
+
+.uv-icon {
+    font-size: 75%;
+    border-radius: 5px;
+    padding-left: 0.5vw;
+    padding-right: 0.5vw;
+}
+
+.uv-icon.low {
+    color: #fff;
+    background-color: var(--uvLow);
+}
+
+.uv-icon.mod {
+    color: rgb(0, 0, 0);
+    background-color: var(--uvMod);
+}
+
+.uv-icon.high {
+    color: rgb(0, 0, 0);
+    background-color: var(--uvHigh);
+}
+
+.uv-icon.vHigh {
+    color: #fff;
+    background-color: var(--uvVHigh);
+}
+
+.uv-icon.ext {
+    color: #fff;
+    background-color: var(--uvExt);
+}
+
 
                                         /* RESPONSIVE STYLING */
 
