@@ -6,6 +6,7 @@ var currentAndForecast = document.querySelector("#all-search-results");
 currentAndForecast.hidden = true;
 var currentConditionsCard = document.querySelector("#search-results-current");
 var theFiveDaySection = document.querySelector("#five-day-section");
+var theInputField = document.querySelector("#cityToSearch");
 
 var forecastCard1 = document.querySelector("#card1");
 var forecastCard2 = document.querySelector("#card2");
@@ -20,6 +21,8 @@ var searchHistory = [];
 var dateOfSearch;
 var currentWeatherIconSrc;
 
+var starterHistoryArray = ["Jackson", "Dubai", "Tulsa", "Bangkok", "London", "Cape Town", "Toronto", "Lagos"];
+
 // http://api.openweathermap.org/data/2.5/weather?id=524901&appid={API key}&lang={lang}
 
 // https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key}
@@ -30,62 +33,64 @@ var fetchWeatherData = function (searchTerm) {
     var weatherDataUrl = `http://api.openweathermap.org/data/2.5/weather?q=${searchTerm}&appid=${openWeatherAPIKey}&units=${units}`
 
     fetch(weatherDataUrl)
-    .then(function (responseOne) {
+        .then(function (responseOne) {
 
-        if(responseOne.ok) {
-            // console.log("This was the fetch responseOne", responseOne);
-            responseOne.json().then(function (weatherData) {
-                // console.log("This is the JSON weatherData", weatherData);
-                var lon = weatherData.coord.lon;
-                var lat = weatherData.coord.lat;
-                var oneCallUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${openWeatherAPIKey}&units=${units}`
+            if (responseOne.ok) {
+                // console.log("This was the fetch responseOne", responseOne);
+                responseOne.json().then(function (weatherData) {
+                    // console.log("This is the JSON weatherData", weatherData);
+                    var lon = weatherData.coord.lon;
+                    var lat = weatherData.coord.lat;
+                    var oneCallUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${openWeatherAPIKey}&units=${units}`
 
-                fetch(oneCallUrl)
-                .then(function (responseTwo) {
+                    fetch(oneCallUrl)
+                        .then(function (responseTwo) {
 
-                    if (responseTwo.ok) {
-                        console.log("We're killing it");
-                        responseTwo.json().then(function (oneCallData) {
-                            // console.log("This is the JSON oneCallData", oneCallData);
-                            // console.log(oneCallData.current.dt);
-                            var clacTime = moment.unix(oneCallData.current.dt).calendar();
-                            addToSearchHistory(searchTerm);
-                            displaySearchHistoryButtons();
-                            // console.log(clacTime);
-                            currentSearchWeatherObject.currentConditions = oneCallData.current;
-                            currentSearchWeatherObject.dailyForecast = oneCallData.daily;
-                            dateOfSearch = moment.unix(oneCallData.current.dt).format("M/DD/YYYY");
-                            currentWeatherIconSrc = `http://openweathermap.org/img/wn/${currentSearchWeatherObject.currentConditions.weather[0].icon}@2x.png`
-                            // console.log("weather icon", currentWeatherIconSrc);
-                            // console.log("here's the date: ", dateOfSearch);
-                            // console.log("Current Conditions property", currentSearchWeatherObject.currentConditions);
-                            // console.log("Daily Forecast Conditions property", currentSearchWeatherObject.dailyForecast);
-                            displayForcast(cityName);
+                            if (responseTwo.ok) {
+                                console.log("We're killing it");
+                                responseTwo.json().then(function (oneCallData) {
+                                    // console.log("This is the JSON oneCallData", oneCallData);
+                                    // console.log(oneCallData.current.dt);
+                                    var clacTime = moment.unix(oneCallData.current.dt).calendar();
+                                    addToSearchHistory(searchTerm);
+                                    displaySearchHistoryButtons();
+                                    // console.log(clacTime);
+                                    currentSearchWeatherObject.currentConditions = oneCallData.current;
+                                    currentSearchWeatherObject.dailyForecast = oneCallData.daily;
+                                    dateOfSearch = moment.unix(oneCallData.current.dt).format("M/DD/YYYY");
+                                    currentWeatherIconSrc = `http://openweathermap.org/img/wn/${currentSearchWeatherObject.currentConditions.weather[0].icon}@2x.png`
+                                    // console.log("weather icon", currentWeatherIconSrc);
+                                    // console.log("here's the date: ", dateOfSearch);
+                                    // console.log("Current Conditions property", currentSearchWeatherObject.currentConditions);
+                                    // console.log("Daily Forecast Conditions property", currentSearchWeatherObject.dailyForecast);
+                                    displayForcast(cityName);
 
+                                })
+
+                            }
                         })
+                });
 
-                    }
-                })
-            });
-
-        }
-        else {
-            alert("Error: " + response.statusText);
-        }
-    })
-    .catch(function(error) {
-        alert("Unable to connect to Open Weather server.")
-    })
+            }
+            else {
+                alert("Error: " + response.statusText);
+            }
+        })
+        .catch(function (error) {
+            alert("Unable to connect to Open Weather server.")
+        })
 
 }
 
-var displaySearchHistoryButtons = function() {
+var displaySearchHistoryButtons = function () {
     console.log("trying to display search history", searchHistory);
     theSearchHistoryContainer.innerHTML = "";
 
     for (var i = 0; i < searchHistory.length; i++) {
         var searchHistoryButton = document.createElement("button");
         searchHistoryButton.classList.add("btn", "past-search");
+        searchHistoryButton.setAttribute("id", "btn" + i);
+        searchHistoryButton.setAttribute("type", "button");
         searchHistoryButton.textContent = searchHistory[i];
         theSearchHistoryContainer.appendChild(searchHistoryButton);
     }
@@ -95,7 +100,7 @@ var displayForcast = function (cityName) {
 
     var uvRatingValue = currentSearchWeatherObject.currentConditions.uvi;
     console.log(uvRatingValue);
-    
+
     var uvRatingStyle;
 
     if (uvRatingValue < 3) {
@@ -138,7 +143,7 @@ var displayForcast = function (cityName) {
     cityCurrentWind.classList.add("main-card");
     cityCurrentWind.textContent = `Wind: ${currentSearchWeatherObject.currentConditions.wind_speed} km/h`
     currentConditionsCard.appendChild(cityCurrentWind);
-  
+
     var cityCurrentHumid = document.createElement("p");
     cityCurrentHumid.classList.add("main-card");
     cityCurrentHumid.textContent = `Humidity: ${currentSearchWeatherObject.currentConditions.humidity} %`
@@ -161,7 +166,7 @@ var displayForcast = function (cityName) {
 
 var addToSearchHistory = function (searchedTerm) {
 
-    if (!searchHistory.includes(searchedTerm)){
+    if (!searchHistory.includes(searchedTerm)) {
 
         searchHistory.unshift(searchedTerm)
         if (searchHistory.length > 8) {
@@ -170,31 +175,42 @@ var addToSearchHistory = function (searchedTerm) {
     }
     else {
         var pos = searchHistory.indexOf(searchedTerm);
-        searchHistory.splice(pos,1);
+        searchHistory.splice(pos, 1);
         searchHistory.unshift(searchedTerm)
     }
     var x = JSON.stringify(searchHistory)
     window.localStorage.setItem("blueSkiesApp", x);
 }
 
-var loadSearchHistory = function() {
+var loadSearchHistory = function () {
     var x = window.localStorage.getItem("blueSkiesApp");
     if (x) {
-    searchHistory = JSON.parse(x);
-    displaySearchHistoryButtons();
+        searchHistory = JSON.parse(x);
     }
+    else {
+        searchHistory = starterHistoryArray;
+    }
+    displaySearchHistoryButtons();
 }
 
 
 var citySubmitHandler = function (event) {
     event.preventDefault();
-    var cityToSearchInput = document.getElementById("cityToSearch");
-    cityName = cityToSearchInput.value;
-    
-    fetchWeatherData(cityName);
-    
-    // saveSearchHistory();
-    
+    console.log(event.type, " --- is the event type");
+
+    switch (event.type) {
+        case "submit":
+            var cityToSearchInput = document.getElementById("cityToSearch");
+            cityName = cityToSearchInput.value;
+            fetchWeatherData(cityName);
+            cityToSearchInput.value = "";
+            break;
+
+        case "click":
+            cityName = event.target.outerText;
+            fetchWeatherData(cityName);
+    }
+
 }
 
 
@@ -204,3 +220,4 @@ var citySubmitHandler = function (event) {
 // Run START
 loadSearchHistory();
 theFormEl.addEventListener("submit", citySubmitHandler);
+theSearchHistoryContainer.addEventListener("click", citySubmitHandler);
