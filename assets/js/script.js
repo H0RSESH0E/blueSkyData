@@ -8,11 +8,11 @@ var currentConditionsCard = document.querySelector("#search-results-current");
 var theFiveDaySection = document.querySelector("#five-day-section");
 var theInputField = document.querySelector("#cityToSearch");
 
+var forecastCard0 = document.querySelector("#card0");
 var forecastCard1 = document.querySelector("#card1");
 var forecastCard2 = document.querySelector("#card2");
 var forecastCard3 = document.querySelector("#card3");
 var forecastCard4 = document.querySelector("#card4");
-var forecastCard5 = document.querySelector("#card5");
 
 
 var units = "metric";
@@ -36,9 +36,7 @@ var fetchWeatherData = function (searchTerm) {
         .then(function (responseOne) {
 
             if (responseOne.ok) {
-                // console.log("This was the fetch responseOne", responseOne);
                 responseOne.json().then(function (weatherData) {
-                    // console.log("This is the JSON weatherData", weatherData);
                     var lon = weatherData.coord.lon;
                     var lat = weatherData.coord.lat;
                     var oneCallUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${openWeatherAPIKey}&units=${units}`
@@ -49,20 +47,14 @@ var fetchWeatherData = function (searchTerm) {
                             if (responseTwo.ok) {
                                 console.log("We're killing it");
                                 responseTwo.json().then(function (oneCallData) {
-                                    // console.log("This is the JSON oneCallData", oneCallData);
-                                    // console.log(oneCallData.current.dt);
+                                    console.log(oneCallData);
                                     var clacTime = moment.unix(oneCallData.current.dt).calendar();
                                     addToSearchHistory(searchTerm);
                                     displaySearchHistoryButtons();
-                                    // console.log(clacTime);
                                     currentSearchWeatherObject.currentConditions = oneCallData.current;
                                     currentSearchWeatherObject.dailyForecast = oneCallData.daily;
                                     dateOfSearch = moment.unix(oneCallData.current.dt).format("M/DD/YYYY");
                                     currentWeatherIconSrc = `http://openweathermap.org/img/wn/${currentSearchWeatherObject.currentConditions.weather[0].icon}@2x.png`
-                                    // console.log("weather icon", currentWeatherIconSrc);
-                                    // console.log("here's the date: ", dateOfSearch);
-                                    // console.log("Current Conditions property", currentSearchWeatherObject.currentConditions);
-                                    // console.log("Daily Forecast Conditions property", currentSearchWeatherObject.dailyForecast);
                                     displayForcast(cityName);
 
                                 })
@@ -96,30 +88,34 @@ var displaySearchHistoryButtons = function () {
     }
 }
 
+var returnUvIndexStyle = function (uvRatingValue) {
+    if (uvRatingValue < 3) {
+        return "low";
+    }
+    else if (uvRatingValue < 6) {
+        return "mod";
+    }
+    else if (uvRatingValue < 8) {
+        return "high";
+    }
+    else if (uvRatingValue < 11) {
+        return "vHigh";
+    }
+    else {
+        return "ext";
+    }
+
+
+}
+
+
 var displayForcast = function (cityName) {
 
     var uvRatingValue = currentSearchWeatherObject.currentConditions.uvi;
     console.log(uvRatingValue);
 
-    var uvRatingStyle;
+    var uvRatingStyle = returnUvIndexStyle(uvRatingValue);
 
-    if (uvRatingValue < 3) {
-        uvRatingStyle = "low";
-    }
-    else if (uvRatingValue < 6) {
-        uvRatingStyle = "mod";
-    }
-    else if (uvRatingValue < 8) {
-        uvRatingStyle = "high";
-    }
-    else if (uvRatingValue < 11) {
-        uvRatingStyle = "vHigh";
-    }
-    else {
-        uvRatingStyle = "ext";
-    }
-
-    console.log(uvRatingStyle, "is the rating style");
     currentConditionsCard.innerHTML = "";
 
     var currentWeatherHeader = document.createElement("header");
@@ -160,7 +156,43 @@ var displayForcast = function (cityName) {
     uvDiv.appendChild(cityCurrentUvi);
     uvDiv.appendChild(uvParagIcon)
     currentConditionsCard.appendChild(uvDiv);
+
+    displayFiveDayForecast ()
+
     currentAndForecast.hidden = false;
+
+}
+
+
+
+var displayFiveDayForecast = function () {
+
+    theFiveDaySection.innerHTML = "";
+
+    for (var i = 0; i < 5; i++) {
+
+        var day = {
+            date: moment().add(i+1, "d").format("M/DD/YYYY"),
+            icon: `http://openweathermap.org/img/wn/${currentSearchWeatherObject.dailyForecast[i].weather[0].icon}@2x.png`,
+            temp: currentSearchWeatherObject.dailyForecast[i].temp.day,
+            wind: currentSearchWeatherObject.dailyForecast[i].wind_speed,
+            humid: currentSearchWeatherObject.dailyForecast[i].humidity,
+
+        }        
+        var markup = `
+        <p>${day.date}</p>
+        <p><img src="${day.icon}"></P>
+        <p>Temp: ${day.temp}</p>
+        <p>Wind: ${day.wind}</p>
+        <p>Humidity: ${day.humid}</p>
+           `;
+
+        var dailyDiv = document.createElement("div");
+        dailyDiv.classList.add("daily-card", "col", "d-flex", "flex-column");
+        dailyDiv.innerHTML = markup;
+        theFiveDaySection.appendChild(dailyDiv);        
+    }
+
 
 }
 
@@ -194,9 +226,8 @@ var loadSearchHistory = function () {
 }
 
 
-var citySubmitHandler = function (event) {
+var userInputHandler = function (event) {
     event.preventDefault();
-    console.log(event.type, " --- is the event type");
 
     switch (event.type) {
         case "submit":
@@ -219,5 +250,5 @@ var citySubmitHandler = function (event) {
 
 // Run START
 loadSearchHistory();
-theFormEl.addEventListener("submit", citySubmitHandler);
-theSearchHistoryContainer.addEventListener("click", citySubmitHandler);
+theFormEl.addEventListener("submit", userInputHandler);
+theSearchHistoryContainer.addEventListener("click", userInputHandler);
