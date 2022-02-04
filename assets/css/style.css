@@ -59,6 +59,13 @@ body {
     color: var(--2-font-color);
 }    
 
+.horiz-border {
+
+    border: 1px solid rgba(0, 0, 0, 0.432);
+    background-color: #d8000e49;
+    margin: 1vh 0;
+}
+
 .uv-icon {
     font-size: 75%;
     border-radius: 5px;

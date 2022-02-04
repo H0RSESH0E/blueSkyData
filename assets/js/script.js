@@ -1,6 +1,7 @@
 
 var openWeatherAPIKey = "3fd922e8cac3e8747c787364f94aace5";
 var theFormEl = document.querySelector("#search-form");
+var theSearchHistoryContainer = document.querySelector("#search-history-container");
 var currentAndForecast = document.querySelector("#all-search-results");
 currentAndForecast.hidden = true;
 var currentConditionsCard = document.querySelector("#search-results-current");
@@ -15,6 +16,7 @@ var forecastCard5 = document.querySelector("#card5");
 
 var units = "metric";
 var currentSearchWeatherObject = {};
+var searchHistory = [];
 var dateOfSearch;
 var currentWeatherIconSrc;
 
@@ -47,6 +49,8 @@ var fetchWeatherData = function (searchTerm) {
                             // console.log("This is the JSON oneCallData", oneCallData);
                             // console.log(oneCallData.current.dt);
                             var clacTime = moment.unix(oneCallData.current.dt).calendar();
+                            addToSearchHistory(searchTerm);
+                            displaySearchHistoryButtons();
                             // console.log(clacTime);
                             currentSearchWeatherObject.currentConditions = oneCallData.current;
                             currentSearchWeatherObject.dailyForecast = oneCallData.daily;
@@ -73,6 +77,18 @@ var fetchWeatherData = function (searchTerm) {
         alert("Unable to connect to Open Weather server.")
     })
 
+}
+
+var displaySearchHistoryButtons = function() {
+    console.log("trying to display search history", searchHistory);
+    theSearchHistoryContainer.innerHTML = "";
+
+    for (var i = 0; i < searchHistory.length; i++) {
+        var searchHistoryButton = document.createElement("button");
+        searchHistoryButton.classList.add("btn", "past-search");
+        searchHistoryButton.textContent = searchHistory[i];
+        theSearchHistoryContainer.appendChild(searchHistoryButton);
+    }
 }
 
 var displayForcast = function (cityName) {
@@ -143,15 +159,42 @@ var displayForcast = function (cityName) {
 
 }
 
+var addToSearchHistory = function (searchedTerm) {
+
+    if (!searchHistory.includes(searchedTerm)){
+
+        searchHistory.unshift(searchedTerm)
+        if (searchHistory.length > 8) {
+            searchHistory.length = 8;
+        }
+    }
+    else {
+        var pos = searchHistory.indexOf(searchedTerm);
+        searchHistory.splice(pos,1);
+        searchHistory.unshift(searchedTerm)
+    }
+    var x = JSON.stringify(searchHistory)
+    window.localStorage.setItem("blueSkiesApp", x);
+}
+
+var loadSearchHistory = function() {
+    var x = window.localStorage.getItem("blueSkiesApp");
+    if (x) {
+    searchHistory = JSON.parse(x);
+    displaySearchHistoryButtons();
+    }
+}
+
 
 var citySubmitHandler = function (event) {
     event.preventDefault();
     var cityToSearchInput = document.getElementById("cityToSearch");
     cityName = cityToSearchInput.value;
+    
     fetchWeatherData(cityName);
     
     // saveSearchHistory();
-    createQuickSearchBtns();
+    
 }
 
 
@@ -159,5 +202,5 @@ var citySubmitHandler = function (event) {
 
 
 // Run START
-
+loadSearchHistory();
 theFormEl.addEventListener("submit", citySubmitHandler);
