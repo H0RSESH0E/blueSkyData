@@ -2,19 +2,12 @@
 var openWeatherAPIKey = "3fd922e8cac3e8747c787364f94aace5";
 var theFormEl = document.querySelector("#search-form");
 var theSearchHistoryContainer = document.querySelector("#search-history-container");
-var currentAndForecast = document.querySelector("#all-search-results");
-currentAndForecast.hidden = true;
 var currentConditionsCard = document.querySelector("#search-results-current");
 var theFiveDaySection = document.querySelector("#five-day-section");
 var theInputField = document.querySelector("#cityToSearch");
-
-var forecastCard0 = document.querySelector("#card0");
-var forecastCard1 = document.querySelector("#card1");
-var forecastCard2 = document.querySelector("#card2");
-var forecastCard3 = document.querySelector("#card3");
-var forecastCard4 = document.querySelector("#card4");
-
-
+var theBGImage = document.querySelector("#background");
+document.querySelector(".current-day").hidden = true;
+document.querySelector(".five-day").hidden = true;
 var units = "metric";
 var currentSearchWeatherObject = {};
 var searchHistory = [];
@@ -22,6 +15,17 @@ var dateOfSearch;
 var currentWeatherIconSrc;
 
 var starterHistoryArray = ["Jackson", "Dubai", "Tulsa", "Bangkok", "London", "Cape Town", "Toronto", "Lagos"];
+var randomBG = {
+    0: "https://c.pxhere.com/images/44/8e/6a598ea940cea51806267676787f-1438901.jpg!d",
+    1: "https://c.pxhere.com/photos/24/7e/mountain_cloud_sunset_sunrise_mountain_range-19749.jpg!d",
+    2: "https://c.pxhere.com/photos/db/61/cloud_sky_plane_silhouette_airplane-107895.jpg!d",
+    3: "https://c.pxhere.com/photos/0f/22/rainbow_background_roadway_beautiful_landscape_country_road_countryside_blue_sky_clouds_sky-657518.jpg!d",
+    4: "https://c.pxhere.com/photos/38/c6/cloud_sky_dawn_dusk_sunrise-7672.jpg!d",
+    5: "https://c.pxhere.com/photos/65/cf/barn_lightning_bolt_storm_thunderstorm_clouds_night_shack-804994.jpg!d",
+    6: "https://c.pxhere.com/photos/54/9a/l_ner_lake_clouds_mirroring_water_sky_blue_lake_reflections-1332502.jpg!d",
+    7: "https://c.pxhere.com/photos/2d/ee/forest_fog_nature_winter_trees_winter_mood_atmospheric_romantic-769880.jpg!d"
+}
+
 
 // http://api.openweathermap.org/data/2.5/weather?id=524901&appid={API key}&lang={lang}
 
@@ -111,20 +115,24 @@ var returnUvIndexStyle = function (uvRatingValue) {
 
 var displayForcast = function (cityName) {
 
+    document.querySelector(".current-day").hidden =true;
+    document.querySelector(".five-day").hidden = true;
+
+
     var uvRatingValue = currentSearchWeatherObject.currentConditions.uvi;
     console.log(uvRatingValue);
 
     var uvRatingStyle = returnUvIndexStyle(uvRatingValue);
 
     currentConditionsCard.innerHTML = "";
-
+    currentConditionsCard.classList.add("current-c");
     var currentWeatherHeader = document.createElement("header");
-    currentWeatherHeader.classList.add("d-flex", "flex-horiz", "flex-justify-content-right", "align-items-end");
+    currentWeatherHeader.classList.add("d-flex", "flex-horiz", "flex-justify-content-start", "align-items-end");
     currentConditionsCard.appendChild(currentWeatherHeader);
 
-    var cityCurrentHeading = document.createElement("h3");
+    var cityCurrentHeading = document.createElement("h1");
     cityCurrentHeading.classList.add("main-card");
-    cityCurrentHeading.textContent = `${cityName} ${dateOfSearch} `
+    cityCurrentHeading.textContent = `${cityName} (${dateOfSearch})\u00a0 `;
     var cityCurrentHeadingImg = document.createElement("img")
     cityCurrentHeadingImg.src = currentWeatherIconSrc;
     currentWeatherHeader.appendChild(cityCurrentHeading);
@@ -137,16 +145,16 @@ var displayForcast = function (cityName) {
 
     var cityCurrentWind = document.createElement("p");
     cityCurrentWind.classList.add("main-card");
-    cityCurrentWind.textContent = `Wind: ${currentSearchWeatherObject.currentConditions.wind_speed} km/h`
+    cityCurrentWind.textContent = `Wind: ${currentSearchWeatherObject.currentConditions.wind_speed} km/h`;
     currentConditionsCard.appendChild(cityCurrentWind);
 
     var cityCurrentHumid = document.createElement("p");
     cityCurrentHumid.classList.add("main-card");
-    cityCurrentHumid.textContent = `Humidity: ${currentSearchWeatherObject.currentConditions.humidity} %`
+    cityCurrentHumid.textContent = `Humidity: ${currentSearchWeatherObject.currentConditions.humidity} %`;
     currentConditionsCard.appendChild(cityCurrentHumid);
 
     var uvDiv = document.createElement("div");
-    uvDiv.classList.add("d-flex", "flex-justify-content-right")
+    uvDiv.classList.add("d-flex", "flex-justify-content-start");
     var cityCurrentUvi = document.createElement("p");
     var uvParagIcon = document.createElement("p");
     cityCurrentUvi.classList.add("main-card");
@@ -158,9 +166,13 @@ var displayForcast = function (cityName) {
     currentConditionsCard.appendChild(uvDiv);
 
     displayFiveDayForecast ()
+    loadRandomBG();
 
-    currentAndForecast.hidden = false;
-
+    var delay = setTimeout(function(){
+        document.querySelector(".current-day").hidden = false;
+        document.querySelector(".five-day").hidden = false;
+            
+    }, 750);
 }
 
 
@@ -172,8 +184,8 @@ var displayFiveDayForecast = function () {
     for (var i = 0; i < 5; i++) {
 
         var day = {
-            date: moment().add(i+1, "d").format("M/DD/YYYY"),
-            icon: `http://openweathermap.org/img/wn/${currentSearchWeatherObject.dailyForecast[i].weather[0].icon}@2x.png`,
+            date: moment().add(i+1, "d").format("dddd"),
+            icon: `http://openweathermap.org/img/wn/${currentSearchWeatherObject.dailyForecast[i].weather[0].icon}.png`,
             temp: currentSearchWeatherObject.dailyForecast[i].temp.day,
             wind: currentSearchWeatherObject.dailyForecast[i].wind_speed,
             humid: currentSearchWeatherObject.dailyForecast[i].humidity,
@@ -182,9 +194,9 @@ var displayFiveDayForecast = function () {
         var markup = `
         <p>${day.date}</p>
         <p><img src="${day.icon}"></P>
-        <p>Temp: ${day.temp}</p>
-        <p>Wind: ${day.wind}</p>
-        <p>Humidity: ${day.humid}</p>
+        <p>Temp: ${day.temp} °C</p>
+        <p>Wind: ${day.wind} km/h</p>
+        <p>Humidity: ${day.humid} %</p>
            `;
 
         var dailyDiv = document.createElement("div");
@@ -244,11 +256,17 @@ var userInputHandler = function (event) {
 
 }
 
+var loadRandomBG = function() {
 
+    let x = Math.floor((Math.random() * 8));
+    console.log(x);
+    y = randomBG[x];
+    theBGImage.setAttribute("style", `background-image:url("${y}"); background-size: cover;`)
 
-
+}
 
 // Run START
+loadRandomBG();
 loadSearchHistory();
 theFormEl.addEventListener("submit", userInputHandler);
 theSearchHistoryContainer.addEventListener("click", userInputHandler);
