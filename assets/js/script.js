@@ -246,8 +246,7 @@ var userInputHandler = function (event) {
             cityName = event.target.outerText;
             fetchWeatherData(cityName);
     }
-        window.location.href = "#results";
-  
+ 
 }
 
 var loadRandomBG = function() {
