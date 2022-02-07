@@ -1,19 +1,10 @@
-
+//Global Variable Declaration
 var openWeatherAPIKey = "3fd922e8cac3e8747c787364f94aace5";
-var theFormEl = document.querySelector("#search-form");
-var theSearchHistoryContainer = document.querySelector("#search-history-container");
-var currentConditionsCard = document.querySelector("#search-results-current");
-var theFiveDaySection = document.querySelector("#five-day-section");
-var theInputField = document.querySelector("#cityToSearch");
-var theBGImage = document.querySelector("#background");
-document.querySelector(".current-day").hidden = true;
-document.querySelector(".five-day").hidden = true;
 var units = "metric";
 var currentSearchWeatherObject = {};
 var searchHistory = [];
 var dateOfSearch;
 var currentWeatherIconSrc;
-
 var starterHistoryArray = ["Jackson", "Dubai", "Tulsa", "Bangkok", "London", "Cape Town", "Toronto", "Lagos"];
 var randomBG = {
     0: "https://c.pxhere.com/images/44/8e/6a598ea940cea51806267676787f-1438901.jpg!d",
@@ -26,15 +17,19 @@ var randomBG = {
     7: "https://c.pxhere.com/photos/2d/ee/forest_fog_nature_winter_trees_winter_mood_atmospheric_romantic-769880.jpg!d"
 }
 
+// DOM linked variable declaration
+var theFormEl = document.querySelector("#search-form");
+var theSearchHistoryContainer = document.querySelector("#search-history-container");
+var currentConditionsCard = document.querySelector("#search-results-current");
+var theFiveDaySection = document.querySelector("#five-day-section");
+var theInputField = document.querySelector("#cityToSearch");
+var theBGImage = document.querySelector("#background");
+document.querySelector(".current-day").hidden = true;
+document.querySelector(".five-day").hidden = true;
 
-// http://api.openweathermap.org/data/2.5/weather?id=524901&appid={API key}&lang={lang}
-
-// https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key}
-
-//http://openweathermap.org/img/wn/10d@2x.png
-
+//THe weather data Fetch populates a universal object to allow easy access to the data by other functions
 var fetchWeatherData = function (searchTerm) {
-    var weatherDataUrl = `http://api.openweathermap.org/data/2.5/weather?q=${searchTerm}&appid=${openWeatherAPIKey}&units=${units}`
+    var weatherDataUrl = `https://api.openweathermap.org/data/2.5/weather?q=${searchTerm}&appid=${openWeatherAPIKey}&units=${units}`
 
     fetch(weatherDataUrl)
         .then(function (responseOne) {
@@ -49,16 +44,14 @@ var fetchWeatherData = function (searchTerm) {
                         .then(function (responseTwo) {
 
                             if (responseTwo.ok) {
-                                console.log("We're killing it");
                                 responseTwo.json().then(function (oneCallData) {
-                                    console.log(oneCallData);
                                     var clacTime = moment.unix(oneCallData.current.dt).calendar();
                                     addToSearchHistory(searchTerm);
                                     displaySearchHistoryButtons();
                                     currentSearchWeatherObject.currentConditions = oneCallData.current;
                                     currentSearchWeatherObject.dailyForecast = oneCallData.daily;
                                     dateOfSearch = moment.unix(oneCallData.current.dt).format("M/DD/YYYY");
-                                    currentWeatherIconSrc = `http://openweathermap.org/img/wn/${currentSearchWeatherObject.currentConditions.weather[0].icon}@2x.png`
+                                    currentWeatherIconSrc = `https://openweathermap.org/img/wn/${currentSearchWeatherObject.currentConditions.weather[0].icon}@2x.png`
                                     displayForcast(cityName);
 
                                 })
@@ -79,7 +72,6 @@ var fetchWeatherData = function (searchTerm) {
 }
 
 var displaySearchHistoryButtons = function () {
-    console.log("trying to display search history", searchHistory);
     theSearchHistoryContainer.innerHTML = "";
 
     for (var i = 0; i < searchHistory.length; i++) {
@@ -112,6 +104,10 @@ var returnUvIndexStyle = function (uvRatingValue) {
 
 }
 
+// A brute force technique was used to generate the dynamic
+// elements here that should be refactored in the future to 
+//resemble the approach taken to build and populate the five 
+//day forcast below
 
 var displayForcast = function (cityName) {
 
@@ -120,7 +116,6 @@ var displayForcast = function (cityName) {
 
 
     var uvRatingValue = currentSearchWeatherObject.currentConditions.uvi;
-    console.log(uvRatingValue);
 
     var uvRatingStyle = returnUvIndexStyle(uvRatingValue);
 
@@ -176,8 +171,8 @@ var displayForcast = function (cityName) {
     }, 450);
 }
 
-
-
+// After typing far to much in the current weather display 
+//function, I devised a better approach here
 var displayFiveDayForecast = function () {
 
     theFiveDaySection.innerHTML = "";
@@ -190,6 +185,7 @@ var displayFiveDayForecast = function () {
             temp: Math.round(currentSearchWeatherObject.dailyForecast[i].temp.day),
             wind: Math.round(currentSearchWeatherObject.dailyForecast[i].wind_speed),
             humid: currentSearchWeatherObject.dailyForecast[i].humidity,
+
 
         }        
         var markup = `
@@ -205,8 +201,6 @@ var displayFiveDayForecast = function () {
         dailyDiv.innerHTML = markup;
         theFiveDaySection.appendChild(dailyDiv);        
     }
-
-
 }
 
 var addToSearchHistory = function (searchedTerm) {
@@ -238,7 +232,6 @@ var loadSearchHistory = function () {
     displaySearchHistoryButtons();
 }
 
-
 var userInputHandler = function (event) {
     event.preventDefault();
 
@@ -249,12 +242,10 @@ var userInputHandler = function (event) {
             fetchWeatherData(cityName);
             cityToSearchInput.value = "";
             break;
-
         case "click":
             cityName = event.target.outerText;
             fetchWeatherData(cityName);
     }
-
         window.location.href = "#results";
   
 }
@@ -262,13 +253,12 @@ var userInputHandler = function (event) {
 var loadRandomBG = function() {
 
     let x = Math.floor((Math.random() * 8));
-    console.log(x);
     y = randomBG[x];
     theBGImage.setAttribute("style", `background-image:url("${y}");`)
 
 }
 
-// Run START
+// "Run START"
 loadRandomBG();
 loadSearchHistory();
 theFormEl.addEventListener("submit", userInputHandler);
