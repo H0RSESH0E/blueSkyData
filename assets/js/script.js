@@ -130,33 +130,34 @@ var displayForcast = function (cityName) {
     currentWeatherHeader.classList.add("d-flex", "flex-horiz", "flex-justify-content-start", "align-items-end");
     currentConditionsCard.appendChild(currentWeatherHeader);
 
-    var cityCurrentHeading = document.createElement("h1");
+    var cityCurrentHeading = document.createElement("h3");
     cityCurrentHeading.classList.add("main-card");
     cityCurrentHeading.textContent = `${cityName} (${dateOfSearch})\u00a0 `;
     var cityCurrentHeadingImg = document.createElement("img")
+    cityCurrentHeadingImg.classList.add("current-weather-icon");
     cityCurrentHeadingImg.src = currentWeatherIconSrc;
     currentWeatherHeader.appendChild(cityCurrentHeading);
     currentWeatherHeader.appendChild(cityCurrentHeadingImg);
 
-    var cityCurrentTemp = document.createElement("p");
+    var cityCurrentTemp = document.createElement("h5");
     cityCurrentTemp.classList.add("main-card");
-    cityCurrentTemp.textContent = `Temp: ${currentSearchWeatherObject.currentConditions.temp} °C`;
+    cityCurrentTemp.textContent = `Temp: ${Math.round(currentSearchWeatherObject.currentConditions.temp)} °C`;
     currentConditionsCard.appendChild(cityCurrentTemp);
 
-    var cityCurrentWind = document.createElement("p");
+    var cityCurrentWind = document.createElement("h5");
     cityCurrentWind.classList.add("main-card");
-    cityCurrentWind.textContent = `Wind: ${currentSearchWeatherObject.currentConditions.wind_speed} km/h`;
+    cityCurrentWind.textContent = `Wind: ${Math.round(currentSearchWeatherObject.currentConditions.wind_speed)} km/h`;
     currentConditionsCard.appendChild(cityCurrentWind);
 
-    var cityCurrentHumid = document.createElement("p");
+    var cityCurrentHumid = document.createElement("h5");
     cityCurrentHumid.classList.add("main-card");
     cityCurrentHumid.textContent = `Humidity: ${currentSearchWeatherObject.currentConditions.humidity} %`;
     currentConditionsCard.appendChild(cityCurrentHumid);
 
     var uvDiv = document.createElement("div");
     uvDiv.classList.add("d-flex", "flex-justify-content-start");
-    var cityCurrentUvi = document.createElement("p");
-    var uvParagIcon = document.createElement("p");
+    var cityCurrentUvi = document.createElement("h5");
+    var uvParagIcon = document.createElement("h5");
     cityCurrentUvi.classList.add("main-card");
     cityCurrentUvi.textContent = `UV Index:\u00a0`;
     uvParagIcon.classList.add("uv-icon", "d-flex", "flex-justify-content-center", "align-items-center", uvRatingStyle);
@@ -172,7 +173,7 @@ var displayForcast = function (cityName) {
         document.querySelector(".current-day").hidden = false;
         document.querySelector(".five-day").hidden = false;
             
-    }, 750);
+    }, 450);
 }
 
 
@@ -186,8 +187,8 @@ var displayFiveDayForecast = function () {
         var day = {
             date: moment().add(i+1, "d").format("dddd"),
             icon: `http://openweathermap.org/img/wn/${currentSearchWeatherObject.dailyForecast[i].weather[0].icon}.png`,
-            temp: currentSearchWeatherObject.dailyForecast[i].temp.day,
-            wind: currentSearchWeatherObject.dailyForecast[i].wind_speed,
+            temp: Math.round(currentSearchWeatherObject.dailyForecast[i].temp.day),
+            wind: Math.round(currentSearchWeatherObject.dailyForecast[i].wind_speed),
             humid: currentSearchWeatherObject.dailyForecast[i].humidity,
 
         }        
@@ -200,7 +201,7 @@ var displayFiveDayForecast = function () {
            `;
 
         var dailyDiv = document.createElement("div");
-        dailyDiv.classList.add("daily-card", "col", "d-flex", "flex-column");
+        dailyDiv.classList.add("daily-card", "col-sm-12", "col-md-12", "col-lg", "d-flex", "flex-column", "justify-content-evenly");
         dailyDiv.innerHTML = markup;
         theFiveDaySection.appendChild(dailyDiv);        
     }
@@ -254,6 +255,8 @@ var userInputHandler = function (event) {
             fetchWeatherData(cityName);
     }
 
+        window.location.href = "#results";
+  
 }
 
 var loadRandomBG = function() {
@@ -261,7 +264,7 @@ var loadRandomBG = function() {
     let x = Math.floor((Math.random() * 8));
     console.log(x);
     y = randomBG[x];
-    theBGImage.setAttribute("style", `background-image:url("${y}"); background-size: cover;`)
+    theBGImage.setAttribute("style", `background-image:url("${y}");`)
 
 }
 
