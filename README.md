@@ -22,7 +22,7 @@ To set up the website:
 ## Usage
 Use this webpage to keep up-to-date on weather around the globe.
 
-See it online now at: [https://h0rsesh0e.github.io/blueSkyData/]
+[See it online now](https://h0rsesh0e.github.io/blueSkyData/)
 
 ## Credits
 This is my sixth project in the Coding Boot Camp provided by [The School of Continuing Studies, University of Toronto](https://learn.utoronto.ca/) and [Trilogy Education Services](https://www.trilogyed.com/).  Thanks to my darling for all of her patience as I struggle to learn another new skill.
