@@ -8,7 +8,7 @@ A simple weather app to get the basic forecast data of major cities and other lo
 
 The following is a short description of my experience completing the project:
 
-- Attempting to complete this project while working on our group projects demanded some time management skills practice.
+- Completing this project while working on our group projects demanded some time management practice.
 - I did not achieve the results I had hoped for with this project.  The coding was good at times and more brutal than elegant at others.  Still, I tried to keep moving forward without constantly refactoring everything I did before.
 - Integrating Boostrap into my design was more troublesome than I anticipated.  I think that I would spend some time studying and familiarizing myself with the CDN if there was a specific need.  However, I find my ability with CSS is better as it is not confused by a lot of unknown styling that Bootstrap offers and I don't yet know about.
 - I made the mistake of designing in the first place to achieve the basic layout of the example and found myself challenged to re-style it for a mobile layout.  As a result I did not achieve an attractive and relatively similar responsive design - this was the worst I have done so far.
